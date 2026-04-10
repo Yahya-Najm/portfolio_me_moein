@@ -13,15 +13,15 @@ const skills = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-24 px-6 max-w-5xl mx-auto">
-      <h2 className="text-3xl font-bold mb-10">
+    <section id="skills" className="py-16 md:py-24 px-4 sm:px-6 max-w-5xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10">
         My <span className="text-[var(--accent)]">Skills</span>
       </h2>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2 sm:gap-3">
         {skills.map(({ name, color }) => (
           <div
             key={name}
-            className="group px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm text-[var(--muted)] cursor-default
+            className="group px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm text-[var(--muted)] cursor-default
                        transition-all duration-200
                        hover:text-[var(--foreground)] hover:border-white/30 hover:bg-white/10
                        hover:-translate-y-1 hover:rotate-1

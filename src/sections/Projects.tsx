@@ -8,34 +8,34 @@ function LayerEditPreview() {
     <div className="w-full rounded-xl overflow-hidden border border-white/10 bg-neutral-950 font-mono text-[10px] select-none shadow-2xl">
 
       {/* Toolbar row */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-neutral-900 border-b border-neutral-800">
-        <div className="flex gap-1.5 mr-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-          <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-          <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+      <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 bg-neutral-900 border-b border-neutral-800">
+        <div className="flex gap-1 sm:gap-1.5 mr-1 sm:mr-2 shrink-0">
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-red-500/80" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-yellow-500/80" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-green-500/80" />
         </div>
-        <span className="text-violet-400 font-semibold tracking-wide">LayerEdit</span>
-        <div className="w-px h-4 bg-neutral-700 mx-1" />
-        {/* Tool icons as colored pills */}
+        <span className="text-violet-400 font-semibold tracking-wide shrink-0">LayerEdit</span>
+        <div className="w-px h-4 bg-neutral-700 mx-1 shrink-0" />
+        {/* Tool pills — hide some on mobile */}
         {["Select","Pan","Crop","Brush","Eraser","Text"].map((t, i) => (
           <span
             key={t}
-            className={`px-1.5 py-0.5 rounded text-[9px] ${i === 3 ? "bg-violet-600 text-white" : "text-neutral-500"}`}
+            className={`px-1.5 py-0.5 rounded text-[9px] shrink-0 ${i > 3 ? "hidden sm:inline" : ""} ${i === 3 ? "bg-violet-600 text-white" : "text-neutral-500"}`}
           >
             {t[0]}
           </span>
         ))}
         <div className="flex-1" />
-        <span className="px-2 py-0.5 rounded bg-amber-500/80 text-black text-[9px]">B/A</span>
-        <span className="px-2 py-0.5 rounded bg-neutral-700 text-neutral-300 text-[9px]">100%</span>
-        <span className="px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px]">Export</span>
+        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-amber-500/80 text-black text-[9px] shrink-0 hidden sm:inline">B/A</span>
+        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-neutral-700 text-neutral-300 text-[9px] shrink-0">100%</span>
+        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px] shrink-0">Export</span>
       </div>
 
-      {/* Body: adjustment panel | canvas | layer panel */}
+      {/* Body: adjustment panel (hidden mobile) | canvas | layer panel (hidden mobile) */}
       <div className="flex" style={{ height: 160 }}>
 
-        {/* Adjustment panel */}
-        <div className="w-24 bg-neutral-900 border-r border-neutral-800 p-2 flex flex-col gap-2 shrink-0">
+        {/* Adjustment panel — hidden on small screens */}
+        <div className="hidden sm:flex w-24 bg-neutral-900 border-r border-neutral-800 p-2 flex-col gap-2 shrink-0">
           <span className="text-[8px] text-neutral-500 uppercase tracking-widest">Adjustments</span>
           {[
             { label: "Brightness", val: 60, color: "bg-yellow-400" },
@@ -67,31 +67,30 @@ function LayerEditPreview() {
             backgroundSize: "16px 16px"
           }} />
 
-          {/* Fake image layer — gradient blob */}
-          <div className="absolute inset-4 rounded-lg overflow-hidden">
+          {/* Gradient image layer */}
+          <div className="absolute inset-3 sm:inset-4 rounded-lg overflow-hidden">
             <div className="absolute inset-0" style={{
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 40%, #f64f59 70%, #c471ed 100%)",
               backgroundSize: "200% 200%",
               animation: "gradient-shift 6s ease infinite",
             }} />
-            {/* Simulated scan/processing line */}
             <div className="absolute left-0 right-0 h-0.5 bg-white/30 animate-scan" />
           </div>
 
           {/* Crop handles */}
-          <div className="absolute top-4 left-4 w-3 h-3 border-t-2 border-l-2 border-white/60 rounded-tl" />
-          <div className="absolute top-4 right-4 w-3 h-3 border-t-2 border-r-2 border-white/60 rounded-tr" />
-          <div className="absolute bottom-4 left-4 w-3 h-3 border-b-2 border-l-2 border-white/60 rounded-bl" />
-          <div className="absolute bottom-4 right-4 w-3 h-3 border-b-2 border-r-2 border-white/60 rounded-br" />
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-3 h-3 border-t-2 border-l-2 border-white/60 rounded-tl" />
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-3 h-3 border-t-2 border-r-2 border-white/60 rounded-tr" />
+          <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-3 h-3 border-b-2 border-l-2 border-white/60 rounded-bl" />
+          <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 w-3 h-3 border-b-2 border-r-2 border-white/60 rounded-br" />
 
           {/* Text layer label */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/50 border border-white/10 text-white text-[9px] whitespace-nowrap">
+          <div className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/50 border border-white/10 text-white text-[9px] whitespace-nowrap">
             T · &ldquo;Hello World&rdquo;
           </div>
         </div>
 
-        {/* Layer panel */}
-        <div className="w-24 bg-neutral-900 border-l border-neutral-800 p-2 flex flex-col gap-1.5 shrink-0">
+        {/* Layer panel — hidden on small screens */}
+        <div className="hidden sm:flex w-24 bg-neutral-900 border-l border-neutral-800 p-2 flex-col gap-1.5 shrink-0">
           <span className="text-[8px] text-neutral-500 uppercase tracking-widest">Layers</span>
           {[
             { name: "Text",    color: "bg-blue-500",   active: false },
@@ -115,7 +114,7 @@ function LayerEditPreview() {
       </div>
 
       {/* Status bar */}
-      <div className="flex items-center justify-between px-3 py-1 bg-neutral-900 border-t border-neutral-800 text-neutral-600 text-[8px]">
+      <div className="flex items-center justify-between px-2 sm:px-3 py-1 bg-neutral-900 border-t border-neutral-800 text-neutral-600 text-[8px]">
         <span>3 layers · 1920 × 1080</span>
         <span>PNG · ready</span>
       </div>
@@ -123,7 +122,7 @@ function LayerEditPreview() {
   );
 }
 
-/* ── 3-D tilt card ── */
+/* ── 3-D tilt card (mouse-only, skipped on touch) ── */
 function TiltCard({ children }: { children: React.ReactNode }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -135,8 +134,8 @@ function TiltCard({ children }: { children: React.ReactNode }) {
     const y = e.clientY - rect.top;
     const cx = rect.width / 2;
     const cy = rect.height / 2;
-    const rotX = ((y - cy) / cy) * -10;
-    const rotY = ((x - cx) / cx) * 10;
+    const rotX = ((y - cy) / cy) * -8;
+    const rotY = ((x - cx) / cx) * 8;
     el.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02,1.02,1.02)`;
   }
 
@@ -163,29 +162,33 @@ const tags = ["Next.js", "TypeScript", "Canvas API", "Zustand", "Tailwind CSS"];
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-24 px-6 max-w-5xl mx-auto">
-      <h2 className="text-3xl font-bold mb-10">
+    <section id="projects" className="py-16 md:py-24 px-4 sm:px-6 max-w-5xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10">
         My <span className="text-[var(--accent)]">Projects</span>
       </h2>
 
-      {/* Featured project */}
       <TiltCard>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6 md:p-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
 
-            {/* Info */}
-            <div className="flex flex-col justify-center order-2 md:order-1">
+            {/* Preview — top on mobile */}
+            <div className="md:order-2 animate-float">
+              <LayerEditPreview />
+            </div>
+
+            {/* Info — bottom on mobile */}
+            <div className="md:order-1 flex flex-col justify-center">
               <span className="text-[var(--accent)] text-xs font-mono tracking-widest uppercase mb-2">
                 Featured Project
               </span>
-              <h3 className="text-2xl font-bold mb-3">LayerEdit</h3>
+              <h3 className="text-xl sm:text-2xl font-bold mb-3">LayerEdit</h3>
               <p className="text-[var(--muted)] text-sm leading-relaxed mb-4">
                 A browser-based image editor inspired by Photoshop. Supports multi-layer editing
                 — stack image, drawing, and text layers independently. Adjust brightness, contrast,
                 saturation, and blur per layer. Crop, rotate, flip, zoom, and compare
                 before&thinsp;/&thinsp;after. Export to PNG or JPEG — all in the browser, no server needed.
               </p>
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-5 sm:mb-6">
                 {tags.map((tag) => (
                   <span
                     key={tag}
@@ -203,11 +206,6 @@ export default function Projects() {
               >
                 View Project →
               </a>
-            </div>
-
-            {/* Preview */}
-            <div className="order-1 md:order-2 animate-float">
-              <LayerEditPreview />
             </div>
 
           </div>
