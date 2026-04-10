@@ -5,70 +5,85 @@ import { useRef } from "react";
 /* ── CSS-art LayerEdit editor mockup ── */
 function LayerEditPreview() {
   return (
-    <div className="w-full rounded-xl overflow-hidden border border-white/10 bg-neutral-950 font-mono text-[10px] select-none shadow-2xl">
+    <div className="w-full max-w-full rounded-xl overflow-hidden border border-white/10 bg-neutral-950 font-mono text-[10px] select-none shadow-2xl">
 
-      {/* Toolbar row */}
-      <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 bg-neutral-900 border-b border-neutral-800">
-        <div className="flex gap-1 sm:gap-1.5 mr-1 sm:mr-2 shrink-0">
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-red-500/80" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-yellow-500/80" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-green-500/80" />
+      {/* Toolbar — two layouts: mobile (minimal) and sm+ (full) */}
+      <div className="flex items-center px-2 sm:px-3 py-2 bg-neutral-900 border-b border-neutral-800 overflow-hidden">
+        {/* Traffic lights */}
+        <div className="flex gap-1 sm:gap-1.5 shrink-0 mr-2">
+          <span className="w-2 h-2 rounded-full bg-red-500/80" />
+          <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
+          <span className="w-2 h-2 rounded-full bg-green-500/80" />
         </div>
+
+        {/* Logo */}
         <span className="text-violet-400 font-semibold tracking-wide shrink-0">LayerEdit</span>
-        <div className="w-px h-4 bg-neutral-700 mx-1 shrink-0" />
-        {/* Tool pills — hide some on mobile */}
-        {["Select","Pan","Crop","Brush","Eraser","Text"].map((t, i) => (
-          <span
-            key={t}
-            className={`px-1.5 py-0.5 rounded text-[9px] shrink-0 ${i > 3 ? "hidden sm:inline" : ""} ${i === 3 ? "bg-violet-600 text-white" : "text-neutral-500"}`}
-          >
-            {t[0]}
-          </span>
-        ))}
-        <div className="flex-1" />
-        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-amber-500/80 text-black text-[9px] shrink-0 hidden sm:inline">B/A</span>
-        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-neutral-700 text-neutral-300 text-[9px] shrink-0">100%</span>
-        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px] shrink-0">Export</span>
+
+        {/* Tool pills — only on sm+ */}
+        <div className="hidden sm:flex items-center gap-1 ml-2">
+          <div className="w-px h-4 bg-neutral-700 mx-1" />
+          {["S","P","C","B","E","T"].map((t, i) => (
+            <span
+              key={t}
+              className={`px-1.5 py-0.5 rounded text-[9px] ${i === 3 ? "bg-violet-600 text-white" : "text-neutral-500"}`}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+
+        {/* Active tool badge on mobile only */}
+        <span className="sm:hidden ml-2 px-1.5 py-0.5 rounded text-[9px] bg-violet-600 text-white shrink-0">
+          Brush
+        </span>
+
+        <div className="flex-1 min-w-0" />
+
+        {/* Right side badges */}
+        <div className="flex items-center gap-1 shrink-0">
+          <span className="hidden sm:inline px-1.5 py-0.5 rounded bg-amber-500/80 text-black text-[9px]">B/A</span>
+          <span className="px-1.5 py-0.5 rounded bg-neutral-700 text-neutral-300 text-[9px]">100%</span>
+          <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px]">Export</span>
+        </div>
       </div>
 
-      {/* Body: adjustment panel (hidden mobile) | canvas | layer panel (hidden mobile) */}
-      <div className="flex" style={{ height: 160 }}>
+      {/* Body */}
+      <div className="flex" style={{ height: 150 }}>
 
-        {/* Adjustment panel — hidden on small screens */}
-        <div className="hidden sm:flex w-24 bg-neutral-900 border-r border-neutral-800 p-2 flex-col gap-2 shrink-0">
+        {/* Adjustment panel — sm+ only */}
+        <div className="hidden sm:flex w-24 shrink-0 bg-neutral-900 border-r border-neutral-800 p-2 flex-col gap-2">
           <span className="text-[8px] text-neutral-500 uppercase tracking-widest">Adjustments</span>
           {[
-            { label: "Brightness", val: 60, color: "bg-yellow-400" },
-            { label: "Contrast",   val: 40, color: "bg-blue-400" },
-            { label: "Saturation", val: 75, color: "bg-pink-400" },
-            { label: "Blur",       val: 20, color: "bg-cyan-400" },
+            { label: "Bri", val: 60, color: "bg-yellow-400" },
+            { label: "Con", val: 40, color: "bg-blue-400" },
+            { label: "Sat", val: 75, color: "bg-pink-400" },
+            { label: "Blu", val: 20, color: "bg-cyan-400" },
           ].map(({ label, val, color }) => (
             <div key={label}>
               <div className="flex justify-between mb-0.5">
-                <span className="text-neutral-500">{label.slice(0, 3)}</span>
-                <span className="text-neutral-400">{val > 50 ? `+${val-50}` : val-50}</span>
+                <span className="text-neutral-500">{label}</span>
+                <span className="text-neutral-400">{val > 50 ? `+${val - 50}` : val - 50}</span>
               </div>
               <div className="h-1 rounded-full bg-neutral-800 overflow-hidden">
                 <div className={`h-full rounded-full ${color} opacity-70`} style={{ width: `${val}%` }} />
               </div>
             </div>
           ))}
-          <div className="flex gap-1 mt-1">
-            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400">Flip H</span>
-            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400">Flip V</span>
+          <div className="flex gap-1 mt-auto">
+            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400 text-[8px]">H</span>
+            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400 text-[8px]">V</span>
           </div>
         </div>
 
-        {/* Canvas area */}
-        <div className="flex-1 relative overflow-hidden bg-[#1a1a2e]">
-          {/* Checkerboard hint */}
+        {/* Canvas */}
+        <div className="flex-1 min-w-0 relative overflow-hidden bg-[#1a1a2e]">
+          {/* Checkerboard */}
           <div className="absolute inset-0 opacity-10" style={{
             backgroundImage: "repeating-conic-gradient(#555 0% 25%, transparent 0% 50%)",
-            backgroundSize: "16px 16px"
+            backgroundSize: "16px 16px",
           }} />
-
-          {/* Gradient image layer */}
-          <div className="absolute inset-3 sm:inset-4 rounded-lg overflow-hidden">
+          {/* Gradient layer */}
+          <div className="absolute inset-3 rounded-lg overflow-hidden">
             <div className="absolute inset-0" style={{
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 40%, #f64f59 70%, #c471ed 100%)",
               backgroundSize: "200% 200%",
@@ -76,33 +91,31 @@ function LayerEditPreview() {
             }} />
             <div className="absolute left-0 right-0 h-0.5 bg-white/30 animate-scan" />
           </div>
-
-          {/* Crop handles */}
-          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-3 h-3 border-t-2 border-l-2 border-white/60 rounded-tl" />
-          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-3 h-3 border-t-2 border-r-2 border-white/60 rounded-tr" />
-          <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-3 h-3 border-b-2 border-l-2 border-white/60 rounded-bl" />
-          <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 w-3 h-3 border-b-2 border-r-2 border-white/60 rounded-br" />
-
-          {/* Text layer label */}
-          <div className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/50 border border-white/10 text-white text-[9px] whitespace-nowrap">
+          {/* Corner handles */}
+          <div className="absolute top-3 left-3 w-3 h-3 border-t-2 border-l-2 border-white/60 rounded-tl" />
+          <div className="absolute top-3 right-3 w-3 h-3 border-t-2 border-r-2 border-white/60 rounded-tr" />
+          <div className="absolute bottom-3 left-3 w-3 h-3 border-b-2 border-l-2 border-white/60 rounded-bl" />
+          <div className="absolute bottom-3 right-3 w-3 h-3 border-b-2 border-r-2 border-white/60 rounded-br" />
+          {/* Text label — hidden on mobile to avoid whitespace-nowrap overflow */}
+          <div className="hidden sm:block absolute bottom-5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/50 border border-white/10 text-white text-[9px] whitespace-nowrap">
             T · &ldquo;Hello World&rdquo;
           </div>
         </div>
 
-        {/* Layer panel — hidden on small screens */}
-        <div className="hidden sm:flex w-24 bg-neutral-900 border-l border-neutral-800 p-2 flex-col gap-1.5 shrink-0">
+        {/* Layer panel — sm+ only */}
+        <div className="hidden sm:flex w-24 shrink-0 bg-neutral-900 border-l border-neutral-800 p-2 flex-col gap-1.5">
           <span className="text-[8px] text-neutral-500 uppercase tracking-widest">Layers</span>
           {[
-            { name: "Text",    color: "bg-blue-500",   active: false },
+            { name: "Text",    color: "bg-blue-500",    active: false },
             { name: "Drawing", color: "bg-emerald-500", active: true  },
-            { name: "Image",   color: "bg-violet-500", active: false },
+            { name: "Image",   color: "bg-violet-500",  active: false },
           ].map(({ name, color, active }) => (
             <div
               key={name}
               className={`flex items-center gap-1.5 px-1.5 py-1 rounded ${active ? "bg-violet-600/30 border border-violet-500/40" : "bg-neutral-800"}`}
             >
-              <span className={`w-2 h-2 rounded-sm ${color} shrink-0`} />
-              <span className="text-neutral-300 truncate">{name}</span>
+              <span className={`w-2 h-2 rounded-sm shrink-0 ${color}`} />
+              <span className="text-neutral-300 truncate text-[9px]">{name}</span>
             </div>
           ))}
           <div className="mt-auto flex gap-1">
@@ -114,15 +127,15 @@ function LayerEditPreview() {
       </div>
 
       {/* Status bar */}
-      <div className="flex items-center justify-between px-2 sm:px-3 py-1 bg-neutral-900 border-t border-neutral-800 text-neutral-600 text-[8px]">
-        <span>3 layers · 1920 × 1080</span>
-        <span>PNG · ready</span>
+      <div className="flex items-center justify-between px-2 sm:px-3 py-1 bg-neutral-900 border-t border-neutral-800 text-neutral-600 text-[8px] overflow-hidden">
+        <span className="truncate mr-2">3 layers · 1920 × 1080</span>
+        <span className="shrink-0">PNG · ready</span>
       </div>
     </div>
   );
 }
 
-/* ── 3-D tilt card (mouse-only, skipped on touch) ── */
+/* ── 3-D tilt card ── */
 function TiltCard({ children }: { children: React.ReactNode }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -130,19 +143,14 @@ function TiltCard({ children }: { children: React.ReactNode }) {
     const el = cardRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    const rotX = ((y - cy) / cy) * -8;
-    const rotY = ((x - cx) / cx) * 8;
+    const rotX = (((e.clientY - rect.top)  / rect.height) - 0.5) * -16;
+    const rotY = (((e.clientX - rect.left) / rect.width)  - 0.5) *  16;
     el.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02,1.02,1.02)`;
   }
 
   function onMouseLeave() {
     const el = cardRef.current;
-    if (!el) return;
-    el.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+    if (el) el.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
   }
 
   return (
@@ -162,22 +170,23 @@ const tags = ["Next.js", "TypeScript", "Canvas API", "Zustand", "Tailwind CSS"];
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-16 md:py-24 px-4 sm:px-6 max-w-5xl mx-auto">
+    <section id="projects" className="py-16 md:py-24 px-4 sm:px-6 max-w-5xl mx-auto overflow-x-clip">
       <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10">
         My <span className="text-[var(--accent)]">Projects</span>
       </h2>
 
       <TiltCard>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6 md:p-8">
+        {/* overflow-hidden ensures nothing bleeds outside the rounded card */}
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6 md:p-8 overflow-hidden">
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
 
-            {/* Preview — top on mobile */}
-            <div className="md:order-2 animate-float">
+            {/* Preview */}
+            <div className="md:order-2 w-full min-w-0 animate-float">
               <LayerEditPreview />
             </div>
 
-            {/* Info — bottom on mobile */}
-            <div className="md:order-1 flex flex-col justify-center">
+            {/* Info */}
+            <div className="md:order-1 flex flex-col justify-center min-w-0">
               <span className="text-[var(--accent)] text-xs font-mono tracking-widest uppercase mb-2">
                 Featured Project
               </span>
