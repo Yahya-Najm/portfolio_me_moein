@@ -1,0 +1,222 @@
+"use client";
+
+import { useRef } from "react";
+
+/* ── CSS-art LayerEdit editor mockup ── */
+function LayerEditPreview() {
+  return (
+    <div className="w-full rounded-xl overflow-hidden border border-white/10 bg-neutral-950 font-mono text-[10px] select-none shadow-2xl">
+
+      {/* Toolbar row */}
+      <div className="flex items-center gap-2 px-3 py-2 bg-neutral-900 border-b border-neutral-800">
+        <div className="flex gap-1.5 mr-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+        </div>
+        <span className="text-violet-400 font-semibold tracking-wide">LayerEdit</span>
+        <div className="w-px h-4 bg-neutral-700 mx-1" />
+        {/* Tool icons as colored pills */}
+        {["Select","Pan","Crop","Brush","Eraser","Text"].map((t, i) => (
+          <span
+            key={t}
+            className={`px-1.5 py-0.5 rounded text-[9px] ${i === 3 ? "bg-violet-600 text-white" : "text-neutral-500"}`}
+          >
+            {t[0]}
+          </span>
+        ))}
+        <div className="flex-1" />
+        <span className="px-2 py-0.5 rounded bg-amber-500/80 text-black text-[9px]">B/A</span>
+        <span className="px-2 py-0.5 rounded bg-neutral-700 text-neutral-300 text-[9px]">100%</span>
+        <span className="px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px]">Export</span>
+      </div>
+
+      {/* Body: adjustment panel | canvas | layer panel */}
+      <div className="flex" style={{ height: 160 }}>
+
+        {/* Adjustment panel */}
+        <div className="w-24 bg-neutral-900 border-r border-neutral-800 p-2 flex flex-col gap-2 shrink-0">
+          <span className="text-[8px] text-neutral-500 uppercase tracking-widest">Adjustments</span>
+          {[
+            { label: "Brightness", val: 60, color: "bg-yellow-400" },
+            { label: "Contrast",   val: 40, color: "bg-blue-400" },
+            { label: "Saturation", val: 75, color: "bg-pink-400" },
+            { label: "Blur",       val: 20, color: "bg-cyan-400" },
+          ].map(({ label, val, color }) => (
+            <div key={label}>
+              <div className="flex justify-between mb-0.5">
+                <span className="text-neutral-500">{label.slice(0, 3)}</span>
+                <span className="text-neutral-400">{val > 50 ? `+${val-50}` : val-50}</span>
+              </div>
+              <div className="h-1 rounded-full bg-neutral-800 overflow-hidden">
+                <div className={`h-full rounded-full ${color} opacity-70`} style={{ width: `${val}%` }} />
+              </div>
+            </div>
+          ))}
+          <div className="flex gap-1 mt-1">
+            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400">Flip H</span>
+            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400">Flip V</span>
+          </div>
+        </div>
+
+        {/* Canvas area */}
+        <div className="flex-1 relative overflow-hidden bg-[#1a1a2e]">
+          {/* Checkerboard hint */}
+          <div className="absolute inset-0 opacity-10" style={{
+            backgroundImage: "repeating-conic-gradient(#555 0% 25%, transparent 0% 50%)",
+            backgroundSize: "16px 16px"
+          }} />
+
+          {/* Fake image layer — gradient blob */}
+          <div className="absolute inset-4 rounded-lg overflow-hidden">
+            <div className="absolute inset-0" style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 40%, #f64f59 70%, #c471ed 100%)",
+              backgroundSize: "200% 200%",
+              animation: "gradient-shift 6s ease infinite",
+            }} />
+            {/* Simulated scan/processing line */}
+            <div className="absolute left-0 right-0 h-0.5 bg-white/30 animate-scan" />
+          </div>
+
+          {/* Crop handles */}
+          <div className="absolute top-4 left-4 w-3 h-3 border-t-2 border-l-2 border-white/60 rounded-tl" />
+          <div className="absolute top-4 right-4 w-3 h-3 border-t-2 border-r-2 border-white/60 rounded-tr" />
+          <div className="absolute bottom-4 left-4 w-3 h-3 border-b-2 border-l-2 border-white/60 rounded-bl" />
+          <div className="absolute bottom-4 right-4 w-3 h-3 border-b-2 border-r-2 border-white/60 rounded-br" />
+
+          {/* Text layer label */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/50 border border-white/10 text-white text-[9px] whitespace-nowrap">
+            T · &ldquo;Hello World&rdquo;
+          </div>
+        </div>
+
+        {/* Layer panel */}
+        <div className="w-24 bg-neutral-900 border-l border-neutral-800 p-2 flex flex-col gap-1.5 shrink-0">
+          <span className="text-[8px] text-neutral-500 uppercase tracking-widest">Layers</span>
+          {[
+            { name: "Text",    color: "bg-blue-500",   active: false },
+            { name: "Drawing", color: "bg-emerald-500", active: true  },
+            { name: "Image",   color: "bg-violet-500", active: false },
+          ].map(({ name, color, active }) => (
+            <div
+              key={name}
+              className={`flex items-center gap-1.5 px-1.5 py-1 rounded ${active ? "bg-violet-600/30 border border-violet-500/40" : "bg-neutral-800"}`}
+            >
+              <span className={`w-2 h-2 rounded-sm ${color} shrink-0`} />
+              <span className="text-neutral-300 truncate">{name}</span>
+            </div>
+          ))}
+          <div className="mt-auto flex gap-1">
+            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-neutral-400">+</span>
+            <span className="flex-1 text-center py-0.5 rounded bg-neutral-800 text-red-400">×</span>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1 bg-neutral-900 border-t border-neutral-800 text-neutral-600 text-[8px]">
+        <span>3 layers · 1920 × 1080</span>
+        <span>PNG · ready</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── 3-D tilt card ── */
+function TiltCard({ children }: { children: React.ReactNode }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  function onMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    const rotX = ((y - cy) / cy) * -10;
+    const rotY = ((x - cx) / cx) * 10;
+    el.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02,1.02,1.02)`;
+  }
+
+  function onMouseLeave() {
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+  }
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className="card-3d"
+      style={{ transition: "transform 0.15s ease" }}
+    >
+      {children}
+    </div>
+  );
+}
+
+const tags = ["Next.js", "TypeScript", "Canvas API", "Zustand", "Tailwind CSS"];
+
+export default function Projects() {
+  return (
+    <section id="projects" className="py-24 px-6 max-w-5xl mx-auto">
+      <h2 className="text-3xl font-bold mb-10">
+        My <span className="text-[var(--accent)]">Projects</span>
+      </h2>
+
+      {/* Featured project */}
+      <TiltCard>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+
+            {/* Info */}
+            <div className="flex flex-col justify-center order-2 md:order-1">
+              <span className="text-[var(--accent)] text-xs font-mono tracking-widest uppercase mb-2">
+                Featured Project
+              </span>
+              <h3 className="text-2xl font-bold mb-3">LayerEdit</h3>
+              <p className="text-[var(--muted)] text-sm leading-relaxed mb-4">
+                A browser-based image editor inspired by Photoshop. Supports multi-layer editing
+                — stack image, drawing, and text layers independently. Adjust brightness, contrast,
+                saturation, and blur per layer. Crop, rotate, flip, zoom, and compare
+                before&thinsp;/&thinsp;after. Export to PNG or JPEG — all in the browser, no server needed.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <a
+                href="https://image-editor-eight-ashy.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-3d self-start px-5 py-2.5 rounded-lg bg-[var(--accent)] text-white text-sm font-medium"
+              >
+                View Project →
+              </a>
+            </div>
+
+            {/* Preview */}
+            <div className="order-1 md:order-2 animate-float">
+              <LayerEditPreview />
+            </div>
+
+          </div>
+        </div>
+      </TiltCard>
+
+      <p className="text-center text-[var(--muted)] text-sm mt-10 opacity-60">
+        More projects coming soon&hellip;
+      </p>
+    </section>
+  );
+}
